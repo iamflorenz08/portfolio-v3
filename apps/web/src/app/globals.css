@@ -1,0 +1,596 @@
+@import "tailwindcss";
+
+/* ───────────────────────── Theme tokens ───────────────────────── */
+
+:root {
+  --background: #fafaf9;
+  --foreground: #18181b;
+  --muted: #52525b;
+  --subtle: #71717a;
+  --border: #e4e4e7;
+  --card: #ffffff;
+  --accent: #0d9488;
+  --accent-2: #7c3aed;
+  --accent-soft: #ccfbf1;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --background: #09090b;
+  --foreground: #fafaf9;
+  --muted: #a1a1aa;
+  --subtle: #71717a;
+  --border: #27272a;
+  --card: #111114;
+  --accent: #5eead4;
+  --accent-2: #a78bfa;
+  --accent-soft: #134e4a;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #09090b;
+    --foreground: #fafaf9;
+    --muted: #a1a1aa;
+    --subtle: #71717a;
+    --border: #27272a;
+    --card: #111114;
+    --accent: #5eead4;
+    --accent-2: #a78bfa;
+    --accent-soft: #134e4a;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* ───────────────────────── Base ───────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--foreground);
+  color: var(--background);
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* ───────────────────────── Utilities ───────────────────────── */
+
+@utility container-page {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.625rem;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--card) 70%, transparent);
+  padding: 0.6rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition:
+    border-color 150ms,
+    background-color 150ms,
+    color 150ms,
+    transform 150ms;
+  &:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@utility btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: var(--background);
+  border-color: transparent;
+  box-shadow: 0 8px 30px -10px color-mix(in oklab, var(--accent) 60%, transparent);
+  &:hover {
+    color: var(--background);
+    border-color: transparent;
+    box-shadow: 0 12px 36px -10px color-mix(in oklab, var(--accent-2) 70%, transparent);
+  }
+}
+
+@utility card {
+  border-radius: 1.25rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+
+@utility text-gradient {
+  background: linear-gradient(100deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Grid backdrop that fades out at the edges */
+.bg-grid {
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
+}
+
+.blob {
+  border-radius: 9999px;
+  filter: blur(80px);
+  animation: float 18s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(40px, -50px) scale(1.12);
+  }
+  100% {
+    transform: translate(-30px, 30px) scale(0.92);
+  }
+}
+
+/* Mouse-follow glow (vars set by <Spotlight>) */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--accent) 16%, transparent),
+    transparent 45%
+  );
+  opacity: 0;
+  transition: opacity 300ms;
+  pointer-events: none;
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Animated gradient border */
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.gradient-border {
+  padding: 1px;
+  border-radius: 1.5rem;
+  background: conic-gradient(
+    from var(--angle),
+    var(--accent),
+    var(--accent-2),
+    transparent 35%,
+    transparent 65%,
+    var(--accent)
+  );
+  animation: spin-angle 6s linear infinite;
+}
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+/* Typewriter caret */
+.caret {
+  display: inline-block;
+  width: 3px;
+  height: 0.9em;
+  margin-left: 4px;
+  vertical-align: -0.08em;
+  background: var(--accent);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Scroll progress bar (CSS scroll-driven animation, no JS) */
+.scroll-progress {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    display: block;
+    transform-origin: 0 50%;
+    animation: grow-x linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Scroll reveal — only hides content once JS has booted, so crawlers / no-JS still see it */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(4px);
+  transition:
+    opacity 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--delay, 0ms);
+}
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Above-the-fold entrance — pure CSS so it never waits on JS (keeps LCP fast) */
+.enter {
+  animation: enter 800ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(6px);
+  }
+}
+
+/* Staggered chips when a skill tab is shown */
+.chip-in {
+  animation: chip-in 450ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+}
+
+/* Theme icons — swap without hydration state */
+.icon-sun {
+  display: none;
+}
+:root[data-theme="dark"] .icon-sun {
+  display: block;
+}
+:root[data-theme="dark"] .icon-moon {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .icon-sun {
+    display: block;
+  }
+  :root:not([data-theme="light"]) .icon-moon {
+    display: none;
+  }
+}
+
+/* Circular theme-switch reveal (View Transitions API) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Command palette */
+/* Project details modal */
+dialog.project-modal::backdrop {
+  background: color-mix(in oklab, black 60%, transparent);
+  backdrop-filter: blur(6px);
+  animation: modal-fade 300ms ease-out;
+}
+dialog.project-modal[open] {
+  animation: modal-in 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+dialog.project-modal[data-closing] {
+  animation: modal-out 220ms ease-in forwards;
+}
+dialog.project-modal[data-closing]::backdrop {
+  animation: modal-fade 220ms ease-in reverse forwards;
+}
+dialog.project-modal[open] .modal-stagger {
+  animation: modal-rise 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(120ms + var(--i, 0) * 80ms);
+}
+.slide-from-right {
+  animation: slide-in 450ms cubic-bezier(0.16, 1, 0.3, 1);
+  --from: 6%;
+}
+.slide-from-left {
+  animation: slide-in 450ms cubic-bezier(0.16, 1, 0.3, 1);
+  --from: -6%;
+}
+@keyframes modal-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.94);
+  }
+}
+@keyframes modal-out {
+  to {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+}
+@keyframes modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--from)) scale(1.02);
+  }
+}
+
+dialog.palette::backdrop {
+  background: color-mix(in oklab, black 45%, transparent);
+  backdrop-filter: blur(4px);
+}
+dialog.palette[open] {
+  animation: palette-in 180ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes palette-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+/* ───────────────────────── Reduced motion ───────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .blob,
+  .gradient-border,
+  .caret,
+  .chip-in,
+  .enter {
+    animation: none !important;
+  }
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
+
+/* ───────────────────────── Custom cursor ───────────────────────── */
+
+.cursor-layer {
+  display: none;
+}
+
+html.custom-cursor .cursor-layer {
+  display: block;
+}
+
+/* The layer is a manual popover so it lives in the top layer, above modal dialogs */
+.cursor-layer[popover] {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+  pointer-events: none;
+}
+.cursor-layer[popover]::backdrop {
+  display: none;
+}
+
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+
+/* Keep the native I-beam in text fields for usability */
+html.custom-cursor input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]),
+html.custom-cursor textarea,
+html.custom-cursor [contenteditable="true"] {
+  cursor: text !important;
+}
+
+.cursor-canvas,
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.cursor-canvas {
+  width: 100vw;
+  height: 100vh;
+}
+
+.cursor-dot,
+.cursor-ring {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+html.cursor-visible .cursor-dot,
+html.cursor-visible .cursor-ring {
+  opacity: 1;
+}
+
+.cursor-dot span,
+.cursor-ring span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 9999px;
+  translate: -50% -50%;
+}
+
+.cursor-dot span {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.cursor-ring span {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid color-mix(in oklab, var(--accent) 70%, transparent);
+  background: transparent;
+  transition:
+    width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    scale 0.15s ease,
+    opacity 0.2s ease;
+}
+
+/* Rotating dashed halo, visible on hover */
+.cursor-ring span::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  border: 1.5px dashed var(--accent-2);
+  opacity: 0;
+  scale: 0.6;
+  transition:
+    opacity 0.3s ease,
+    scale 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: cursor-spin 4s linear infinite;
+}
+
+.cursor-ring.is-hover span {
+  width: 58px;
+  height: 58px;
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  backdrop-filter: blur(1px);
+}
+
+.cursor-ring.is-hover span::after {
+  opacity: 0.7;
+  scale: 1;
+}
+
+.cursor-ring.is-down span {
+  scale: 0.75;
+  background: color-mix(in oklab, var(--accent-2) 25%, transparent);
+}
+
+.cursor-ring.is-text span {
+  opacity: 0;
+}
+
+html.custom-cursor:has(.cursor-ring.is-text) .cursor-dot span {
+  opacity: 0;
+}
+
+@keyframes cursor-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Infinite horizontal marquee (content is duplicated, so -50% loops seamlessly) */
+.marquee {
+  animation: marquee 40s linear infinite;
+}
+.marquee:hover {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+}
